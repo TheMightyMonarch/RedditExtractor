@@ -1,4 +1,5 @@
 ﻿using System;
+using Extractor.PostProcessors;
 using Extractor.Processors;
 
 namespace Extractor
@@ -9,7 +10,7 @@ namespace Extractor
         {
             var processor = new MostPopular();
 
-            processor.Setup();            
+            processor.Setup();
         }
     }
 }

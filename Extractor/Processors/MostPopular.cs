@@ -18,9 +18,9 @@ namespace Extractor.Processors
         public MostPopular()
         {
             _startYear = "2005";
-            _endYear = "2008";
+            _endYear = "2018";
             _chunkSize = 25000;
-            _maxThreads = 8;
+            _maxThreads = 12;
         }
 
         // Start the process!
@@ -97,10 +97,10 @@ namespace Extractor.Processors
                 result.UniqueUsers.TryAdd(comment.author, 0);
                 result.UniqueUsers[comment.author] += 1;
 
-                result.UniqueUsersBySub.TryAdd(comment.subreddit, new Dictionary<string, int>());
+                result.UniqueUsersBySub.TryAdd(comment.subreddit.ToUpper(), new Dictionary<string, int>());
 
-                result.UniqueUsersBySub[comment.subreddit].TryAdd(comment.author, 0);
-                result.UniqueUsersBySub[comment.subreddit][comment.author] += 1;
+                result.UniqueUsersBySub[comment.subreddit.ToUpper()].TryAdd(comment.author, 0);
+                result.UniqueUsersBySub[comment.subreddit.ToUpper()][comment.author] += 1;
             }
         }
     }

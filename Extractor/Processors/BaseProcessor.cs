@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Extractor.Models;
+using Extractor.PostProcessors;
 
 namespace Extractor.Processors
 {
@@ -23,7 +24,7 @@ namespace Extractor.Processors
         // Directory on the local system for easy reading
         protected const string LocalResourcePath = @"C:\Projects\LocalResources\";
         // Directory on the external hard drive for the serious processing
-        protected const string ResourcePath = @"E:\Analysis\Data\Reddit\";
+        protected const string ResourcePath = @"F:\Analysis\Data\Reddit\";
 
         // The following three variables let us configure the ways in which our
         // code processes our data.
@@ -216,6 +217,8 @@ namespace Extractor.Processors
                     };
 
                     LogResults(currentResult);
+
+                    Pollenation.DoPostProcessing(currentResult);
                 }
             }
 
@@ -282,16 +285,6 @@ namespace Extractor.Processors
         // This keeps us from having a nasty memory leak.
         public void ConsolidateResults(ProcessorResult final, List<ProcessorResult> results)
         {
-            if (final.UniqueUsers == null)
-            {
-                final.UniqueUsers = new Dictionary<string, int>();
-            }
-
-            if (final.UniqueUsersBySub == null)
-            {
-                final.UniqueUsersBySub = new Dictionary<string, Dictionary<string, int>>();
-            }
-
             foreach (var node in results)
             {
                 foreach (var sub in node.WordCountBySub)
@@ -351,7 +344,7 @@ namespace Extractor.Processors
                     .ToList()
                     .OrderByDescending(word => word.Value);
 
-                using (FileStream file = File.OpenWrite(string.Format("{0}{1}.csv", LocalResourcePath, result.Name)))
+                using (var file = File.OpenWrite(string.Format("{0}{1}.csv", LocalResourcePath, result.Name)))
                 {
                     foreach (var word in wordList)
                     {
@@ -368,7 +361,7 @@ namespace Extractor.Processors
                 // Create file for our user data
                 Console.WriteLine("Writing user list for " + result.Name);
                 
-                using (FileStream file = File.OpenWrite(string.Format("{0}{1} - Users.csv", LocalResourcePath, result.Name)))
+                using (var file = File.OpenWrite(string.Format("{0}{1} - Users.csv", LocalResourcePath, result.Name)))
                 {
                     foreach (var user in result.UniqueUsers)
                     {
@@ -403,7 +396,7 @@ namespace Extractor.Processors
                         cleanName += " (forbidden)";
                     }
 
-                    using (FileStream file = File.OpenWrite(
+                    using (var file = File.OpenWrite(
                         string.Format("{0}\\{1}.csv", namedDirectory, cleanName)
                     ))
                     {
@@ -437,7 +430,7 @@ namespace Extractor.Processors
                         cleanName += " (forbidden)";
                     }
 
-                    using (FileStream file = File.OpenWrite(
+                    using (var file = File.OpenWrite(
                         string.Format("{0}\\{1} - Users.csv", namedDirectory, cleanName)
                     ))
                     {
