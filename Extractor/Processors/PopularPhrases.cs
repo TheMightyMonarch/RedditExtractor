@@ -14,20 +14,21 @@ namespace Extractor.Processors
             _startYear = "2005";
             _endYear = "2018";
             _chunkSize = 25000;
-            _maxThreads = 8;
+            _maxThreads = 12;
+            _queueSize = 4;
         }
 
         public void Setup()
         {
-            
+            base.Setup(Process);
         }
 
         public void Process(string chunk, ProcessorResult result)
         {
             var comments = JSON.Deserialize<Comment[]>(chunk);
             
-            // We'll get phrases of up to ten words
-            var lastWords = new FixedSizeQueue<string>(10);
+            // We'll use this queue to keep track of all the phrases in our comments
+            var lastWords = new FixedSizeQueue<string>(_queueSize);
             foreach (var comment in comments)
             {
                 if (!CommunityWhitelist.Values.Contains(comment.subreddit.ToUpper()))
@@ -45,18 +46,17 @@ namespace Extractor.Processors
                 foreach (var token in tokens)
                 {
                     lastWords.Enqueue(token);
-                    if (lastWords.Count < 2)
+
+                    for (var i = 0; i < lastWords.Count; i++)
                     {
-                        continue;
+                        var words = lastWords.ToArray().Take(i + 1);
+
+                        // Join our phrase together
+                        var phrase = string.Join(" ", words);
+
+                        result.WordCountBySub[comment.subreddit].TryAdd(phrase, 0);
+                        result.WordCountBySub[comment.subreddit][phrase] += 1;
                     }
-
-                    var words = lastWords.ToArray();
-
-                    // Join our phrase together
-                    var phrase = string.Join(" ", words);
-
-                    result.WordCountBySub[comment.subreddit].TryAdd(phrase, 0);
-                    result.WordCountBySub[comment.subreddit][phrase] += 1;
                 }
 
                 // After we're done with a comment, clear out the queue

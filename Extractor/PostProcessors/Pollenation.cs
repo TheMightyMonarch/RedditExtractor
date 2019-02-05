@@ -7,7 +7,7 @@ using Extractor.Models;
 
 namespace Extractor.PostProcessors
 {
-    public class Pollenation
+    public class Engagement
     {
         protected const string LocalResourcePath = @"C:\Projects\LocalResources\";
         protected const string ResourcePath = @"F:\Analysis\Data\Reddit\";
@@ -15,29 +15,23 @@ namespace Extractor.PostProcessors
         // TODO - TBD if we need to retrieve this data from files to conserve memory
         public static void DoPostProcessing(List<ProcessorResult> records)
         {
-            var executors = new List<Func<List<ProcessorResult>, bool>>
-            {
-                UserPollenation,
-                CommunityPollenation
-            };
-
-            foreach (var executor in executors)
-            {
-                executor.Invoke(records);
-            }
+            var engagement = GetUserEngagement(records);
+            GetAverageCommunityEngagement(engagement, records.First().Name);
         }
 
-        // Derives the rates of cross-pollenation between users
+        // Derives the rates of cross-Engagement between users
         // of the targeted communities.
-        public static bool UserPollenation(List<ProcessorResult> records)
+        public static List<UserEngagement> GetUserEngagement(List<ProcessorResult> records)
         {
-            Console.WriteLine("User pollenation review");
+            Console.WriteLine("User Engagement review");
             
             if (records == null)
             {
-                Console.WriteLine("No records present for user pollenation review");
-                return false;
+                Console.WriteLine("No records present for user Engagement review");
+                return new List<UserEngagement>();
             }
+            
+            var results = new List<UserEngagement>();
 
             var whitelist = new List<string>();
             whitelist.AddRange(CommunityWhitelist.Values);
@@ -60,7 +54,7 @@ namespace Extractor.PostProcessors
                     // Determine community engagement of each user for each community
                     foreach (var user in record.UniqueUsers)
                     {
-                        UserPollenation result = new UserPollenation
+                        UserEngagement result = new UserEngagement
                         {
                             Username = user.Key,
                             TotalComments = user.Value,
@@ -99,18 +93,80 @@ namespace Extractor.PostProcessors
                         }
 
                         file.Write(Encoding.Unicode.GetBytes(string.Join(",", text) + "\r\n"));
+
+                        results.Add(result);
                     }
                 }
             }
 
-            return true;
+            return results;
         }
 
         // Determines the average rate at which each community
         // cross-pollenates with other communities
-        public static bool CommunityPollenation(List<ProcessorResult> records)
+        public static void GetAverageCommunityEngagement(List<UserEngagement> engagement, string name)
         {
-            return true;
+            var averageEngagement = new UserEngagement
+            {
+                Username = "Average Engagement",
+                TotalComments = 0,
+                CommunityProportions = new Dictionary<string, float>()
+            };
+
+            var totalAdjusted = new Dictionary<string, int>();
+            var adjustedEngagement = new UserEngagement
+            {
+                Username = "Average Engagement",
+                TotalComments = 0,
+                CommunityProportions = new Dictionary<string, float>()
+            };
+
+            foreach (var user in engagement)
+            {
+                foreach (var node in user.CommunityProportions)
+                {
+                    averageEngagement.CommunityProportions.TryAdd(node.Key, 0);
+                    averageEngagement.CommunityProportions[node.Key] += node.Value;
+
+                    if (node.Value > 0)
+                    {
+                        totalAdjusted.TryAdd(node.Key, 0);
+                        totalAdjusted[node.Key] += 1;
+                        adjustedEngagement.CommunityProportions.TryAdd(node.Key, 0);
+                        adjustedEngagement.CommunityProportions[node.Key] += node.Value;
+                    }
+                }
+            }
+
+            var keys = averageEngagement.CommunityProportions.Keys.ToList();
+            foreach (var key in keys)
+            {
+                averageEngagement.CommunityProportions[key] /= engagement.Count;
+            }
+
+            using (var file = File.OpenWrite(string.Format("{0}{1} - Average Engagement.csv", LocalResourcePath, name)))
+            {
+                foreach (var community in averageEngagement.CommunityProportions)
+                {
+                    var text = string.Format("{0},{1}\r\n", community.Key, community.Value.ToString("0.000"));
+                    file.Write(Encoding.Unicode.GetBytes(text));
+                }
+            }
+
+            keys = adjustedEngagement.CommunityProportions.Keys.ToList();
+            foreach (var key in keys)
+            {
+                adjustedEngagement.CommunityProportions[key] /= totalAdjusted[key];
+            }
+
+            using (var file = File.OpenWrite(string.Format("{0}{1} - Adjusted Average Engagement.csv", LocalResourcePath, name)))
+            {
+                foreach (var community in adjustedEngagement.CommunityProportions)
+                {
+                    var text = string.Format("{0},{1}\r\n", community.Key, community.Value.ToString("0.000"));
+                    file.Write(Encoding.Unicode.GetBytes(text));
+                }
+            }
         }
     }
 }

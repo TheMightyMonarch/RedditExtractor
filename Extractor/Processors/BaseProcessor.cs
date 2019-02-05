@@ -32,6 +32,7 @@ namespace Extractor.Processors
         protected string _endYear { get; set; }
         protected int _chunkSize { get; set; }
         protected int _maxThreads { get; set; }
+        protected short _queueSize { get; set; }
 
         // Turns out Windows has a series of ancient forbidden files that one does not create.
         private static readonly List<string> ForbiddenFiles = new List<string>
@@ -218,7 +219,7 @@ namespace Extractor.Processors
 
                     LogResults(currentResult);
 
-                    Pollenation.DoPostProcessing(currentResult);
+                    Engagement.DoPostProcessing(currentResult);
                 }
             }
 
