@@ -19,24 +19,39 @@ namespace Extractor.Models
         public const string ShitRedditSays = "SHITREDDITSAYS";
         public const string Conspiracy = "CONSPIRACY";
         public const string Quincels = "QUINCELS";
+        public const string BraIncels = "Braincels";
+        public const string TheGreatAwakening = "The_GreatAwakening";
+        public const string MaleForeverAlone = "MaleForeverAlone";
+        public const string IncelReddit = "IncelReddit";
+        public const string IncelsWithoutHate = "IncelsWithoutHate";
+        public const string DebateAltRight = "DEBATEALTRIGHT";
+        public const string Fascist = "FASCIST";
+        public const string BeholdTheMasterRace = "BEHOLDTHEMASTERRACE";
+        public const string CringeAnarchy = "CRINGEANARCHY";
 
         public static readonly List<string> Values = new List<string>
         {
             MensRights,
             TheRedPill,
-            Incels,
             Mgtow,
-            TheDonald,
+            Incels,
+            BraIncels,
             BeatingWomen,
-            Politics,
-            News,
+            Quincels,
+            MaleForeverAlone,
+            IncelReddit,
+            IncelsWithoutHate,
+
+            GreatAwakening,
+            TheGreatAwakening,
             Conservative,
             DebateFascism,
-            GreatAwakening,
-            Feminism,
-            ShitRedditSays,
+            TheDonald,
             Conspiracy,
-            Quincels
+            DebateAltRight,
+            Fascist,
+            BeholdTheMasterRace,
+            CringeAnarchy
         };
     }
 }
