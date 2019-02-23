@@ -41,7 +41,7 @@ namespace Extractor.Processors
                     .ToList()
                     .Select(token => token.ToUpper());
 
-                result.WordCountBySub.TryAdd(comment.subreddit, new Dictionary<string, int>());
+                result.WordCountBySub.TryAdd(comment.subreddit, new Dictionary<string, long>());
 
                 foreach (var token in tokens)
                 {

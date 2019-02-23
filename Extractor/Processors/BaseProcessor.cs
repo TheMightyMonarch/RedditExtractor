@@ -155,9 +155,9 @@ namespace Extractor.Processors
                     var yearlyResult = new ProcessorResult
                     {
                         Name = yearRecord.Key,
-                        WordCountBySub = new Dictionary<string, Dictionary<string, int>>(),
-                        UniqueUsers = new Dictionary<string, int>(),
-                        UniqueUsersBySub = new Dictionary<string, Dictionary<string, int>>()
+                        WordCountBySub = new Dictionary<string, Dictionary<string, long>>(),
+                        UniqueUsers = new Dictionary<string, long>(),
+                        UniqueUsersBySub = new Dictionary<string, Dictionary<string, long>>()
                     };
 
                     foreach (var file in yearRecord.Value)
@@ -171,9 +171,9 @@ namespace Extractor.Processors
                         var fileResult = new ProcessorResult()
                         {
                             Name = yearlyResult.Name,
-                            WordCountBySub = new Dictionary<string, Dictionary<string, int>>(),
-                            UniqueUsers = new Dictionary<string, int>(),
-                            UniqueUsersBySub = new Dictionary<string, Dictionary<string, int>>()
+                            WordCountBySub = new Dictionary<string, Dictionary<string, long>>(),
+                            UniqueUsers = new Dictionary<string, long>(),
+                            UniqueUsersBySub = new Dictionary<string, Dictionary<string, long>>()
                         };
 
                         var tasks = new List<Task>();
@@ -241,9 +241,9 @@ namespace Extractor.Processors
                 var result = new ProcessorResult
                 {
                     Name = name,
-                    WordCountBySub = new Dictionary<string, Dictionary<string, int>>(),
-                    UniqueUsers = new Dictionary<string, int>(),
-                    UniqueUsersBySub = new Dictionary<string, Dictionary<string, int>>()
+                    WordCountBySub = new Dictionary<string, Dictionary<string, long>>(),
+                    UniqueUsers = new Dictionary<string, long>(),
+                    UniqueUsersBySub = new Dictionary<string, Dictionary<string, long>>()
                 };
 
                 executor.Invoke(tempChunk, result);
@@ -290,7 +290,7 @@ namespace Extractor.Processors
             {
                 foreach (var sub in node.WordCountBySub)
                 {
-                    final.WordCountBySub.TryAdd(sub.Key, new Dictionary<string, int>());
+                    final.WordCountBySub.TryAdd(sub.Key, new Dictionary<string, long>());
 
                     foreach (var word in node.WordCountBySub[sub.Key])
                     {
@@ -307,7 +307,7 @@ namespace Extractor.Processors
 
                 foreach (var sub in node.UniqueUsersBySub)
                 {
-                    final.UniqueUsersBySub.TryAdd(sub.Key, new Dictionary<string, int>());
+                    final.UniqueUsersBySub.TryAdd(sub.Key, new Dictionary<string, long>());
 
                     foreach (var user in sub.Value)
                     {
@@ -354,7 +354,35 @@ namespace Extractor.Processors
                             continue;
                         }
 
-                        var text = string.Format("{0},{1}\r\n", word.Key, word.Value);
+                        var masculinist = Categorization.MasculinistWords
+                            .Select(w => w.ToUpper())
+                            .Contains(word.Key.ToUpper());
+
+                        var altright = Categorization.AltRightWords
+                            .Select(w => w.ToUpper())
+                            .Contains(word.Key.ToUpper());
+
+                        var consciousness = Categorization.ConsciousnessRaising
+                            .Select(w => w.ToUpper())
+                            .Contains(word.Key.ToUpper());
+
+                        var alternativeMasculinity = Categorization.AlternativeMasculinity
+                            .Select(w => w.ToUpper())
+                            .Contains(word.Key.ToUpper());
+
+                        var political = Categorization.Political
+                            .Select(w => w.ToUpper())
+                            .Contains(word.Key.ToUpper());
+
+                        var text = string.Format("{0},{1},{2},{3},{4},{5},{6}\r\n", 
+                            word.Key, 
+                            word.Value, 
+                            masculinist, 
+                            altright, 
+                            consciousness, 
+                            alternativeMasculinity, 
+                            political
+                        );
                         file.Write(Encoding.Unicode.GetBytes(text));
                     }
                 }
@@ -407,8 +435,37 @@ namespace Extractor.Processors
                             {
                                 continue;
                             }
-                            
-                            var text = string.Format("{0},{1}\r\n", word.Key, word.Value);
+
+                            var masculinist = Categorization.MasculinistWords
+                                .Select(w => w.ToUpper())
+                                .Contains(word.Key.ToUpper());
+
+                            var altright = Categorization.AltRightWords
+                                .Select(w => w.ToUpper())
+                                .Contains(word.Key.ToUpper());
+
+                            var consciousness = Categorization.ConsciousnessRaising
+                                .Select(w => w.ToUpper())
+                                .Contains(word.Key.ToUpper());
+
+                            var alternativeMasculinity = Categorization.AlternativeMasculinity
+                                .Select(w => w.ToUpper())
+                                .Contains(word.Key.ToUpper());
+
+                            var political = Categorization.Political
+                                .Select(w => w.ToUpper())
+                                .Contains(word.Key.ToUpper());
+
+                            var text = string.Format("{0},{1},{2},{3},{4},{5},{6}\r\n", 
+                                word.Key, 
+                                word.Value, 
+                                masculinist, 
+                                altright, 
+                                consciousness, 
+                                alternativeMasculinity, 
+                                political
+                            );
+
                             file.Write(Encoding.Unicode.GetBytes(text));
                         }
                     }

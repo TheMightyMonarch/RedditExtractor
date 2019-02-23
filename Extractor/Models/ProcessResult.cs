@@ -8,10 +8,10 @@ namespace Extractor.Models
 
         public Dictionary<string, long> WordCounts { get; set; }
 
-        public Dictionary<string, Dictionary<string, int>> WordCountBySub { get; set; }
+        public Dictionary<string, Dictionary<string, long>> WordCountBySub { get; set; }
 
-        public Dictionary<string, int> UniqueUsers { get; set; }
+        public Dictionary<string, long> UniqueUsers { get; set; }
 
-        public Dictionary<string, Dictionary<string, int>> UniqueUsersBySub { get; set; }
+        public Dictionary<string, Dictionary<string, long>> UniqueUsersBySub { get; set; }
     }
 }

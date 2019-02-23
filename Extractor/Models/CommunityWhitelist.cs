@@ -19,11 +19,11 @@ namespace Extractor.Models
         public const string ShitRedditSays = "SHITREDDITSAYS";
         public const string Conspiracy = "CONSPIRACY";
         public const string Quincels = "QUINCELS";
-        public const string BraIncels = "Braincels";
-        public const string TheGreatAwakening = "The_GreatAwakening";
-        public const string MaleForeverAlone = "MaleForeverAlone";
-        public const string IncelReddit = "IncelReddit";
-        public const string IncelsWithoutHate = "IncelsWithoutHate";
+        public const string BraIncels = "BRAINCELS";
+        public const string TheGreatAwakening = "THE_GREATAWAKENING";
+        public const string MaleForeverAlone = "MALEFOREVERALONE";
+        public const string IncelReddit = "INCELREDDIT";
+        public const string IncelsWithoutHate = "INCELSWITHOUTHATE";
         public const string DebateAltRight = "DEBATEALTRIGHT";
         public const string Fascist = "FASCIST";
         public const string BeholdTheMasterRace = "BEHOLDTHEMASTERRACE";
@@ -41,7 +41,34 @@ namespace Extractor.Models
             MaleForeverAlone,
             IncelReddit,
             IncelsWithoutHate,
+            GreatAwakening,
+            TheGreatAwakening,
+            Conservative,
+            DebateFascism,
+            TheDonald,
+            Conspiracy,
+            DebateAltRight,
+            Fascist,
+            BeholdTheMasterRace,
+            CringeAnarchy
+        };
 
+        public static readonly List<string> Masculinist = new List<string>
+        {
+            MensRights,
+            TheRedPill,
+            Mgtow,
+            Incels,
+            BraIncels,
+            BeatingWomen,
+            Quincels,
+            MaleForeverAlone,
+            IncelReddit,
+            IncelsWithoutHate
+        };
+
+        public static readonly List<string> AltRight = new List<string>
+        {
             GreatAwakening,
             TheGreatAwakening,
             Conservative,

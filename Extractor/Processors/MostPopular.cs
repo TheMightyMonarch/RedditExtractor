@@ -18,7 +18,7 @@ namespace Extractor.Processors
         public MostPopular()
         {
             _startYear = "2005";
-            _endYear = "2018";
+            _endYear = "2019";
             _chunkSize = 25000;
             _maxThreads = 12;
         }
@@ -77,27 +77,25 @@ namespace Extractor.Processors
                     .ToList()
                     .Select(token => token.ToUpper());
 
-                result.WordCountBySub.TryAdd(comment.subreddit, new Dictionary<string, int>());
+                result.WordCountBySub.TryAdd(comment.subreddit, new Dictionary<string, long>());
 
                 foreach (var token in tokens)
                 {
-                    if (token.Length < 2)
-                    {
-                        continue;
-                    }
-
                     // Populate word count by subreddit
                     result.WordCountBySub[comment.subreddit].TryAdd(token, 0);
                     result.WordCountBySub[comment.subreddit][token] += 1;
+
+                    result.WordCountBySub[comment.subreddit].TryAdd("+++ Total Word Count +++", 0);
+                    result.WordCountBySub[comment.subreddit]["+++ Total Word Count +++"] += 1;
                 }
 
-                result.WordCountBySub[comment.subreddit].TryAdd("+++ Total Count +++", 0);
-                result.WordCountBySub[comment.subreddit]["+++ Total Count +++"] += 1;
+                result.WordCountBySub[comment.subreddit].TryAdd("+++ Total Comment Count +++", 0);
+                result.WordCountBySub[comment.subreddit]["+++ Total Comment Count +++"] += 1;
 
                 result.UniqueUsers.TryAdd(comment.author, 0);
                 result.UniqueUsers[comment.author] += 1;
 
-                result.UniqueUsersBySub.TryAdd(comment.subreddit.ToUpper(), new Dictionary<string, int>());
+                result.UniqueUsersBySub.TryAdd(comment.subreddit.ToUpper(), new Dictionary<string, long>());
 
                 result.UniqueUsersBySub[comment.subreddit.ToUpper()].TryAdd(comment.author, 0);
                 result.UniqueUsersBySub[comment.subreddit.ToUpper()][comment.author] += 1;
